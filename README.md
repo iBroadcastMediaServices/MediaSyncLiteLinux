@@ -5,7 +5,7 @@ iBroadcast Media Sync Lite v0.4.1
 - gtk+3.0 development files (usually libgtk3-dev) >= 3.10
 - libcurl
 - openssl
-- libjansson (http://www.digip.org/jansson/releases/)
+- libjansson (2.7 included, in ./jansson)
 
 Just execute:
 
