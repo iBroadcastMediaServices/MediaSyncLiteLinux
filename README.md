@@ -3,7 +3,9 @@ iBroadcast Media Sync Lite v0.4.1
 - gcc
 - make
 - gtk+3.0 development files (usually libgtk3-dev) >= 3.10
+    - on Ubuntu, use libgtk-3-dev
 - libcurl
+    - on Ubuntu, use libcurl4-openssl-dev
 - openssl
 - libjansson (http://www.digip.org/jansson/releases/)
 
