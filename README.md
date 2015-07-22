@@ -7,7 +7,7 @@ iBroadcast Media Sync Lite v0.4.1
 - libcurl
     - on Ubuntu, use libcurl4-openssl-dev
 - openssl
-- libjansson (http://www.digip.org/jansson/releases/)
+- libjansson (available in ./jansson-2.7)
 
 Just execute:
 
