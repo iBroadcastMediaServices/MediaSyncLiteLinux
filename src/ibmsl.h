@@ -1,3 +1,20 @@
+/* ibmsl.h ---
+ *
+ * Filename: ibmsl.h
+ * Description:
+ * Author: Andrey Andruschenko
+ * Maintainer:
+ * Created: Пн июл  6 16:19:11 2015 (+0300)
+ * Version:
+ * Last-Updated:
+ *           By:
+ *     Update #: 146
+ * URL:
+ * Keywords:
+ * Compatibility:
+ *
+ */
+
 #ifndef __IBMSL_H_
 #define __IBMSL_H_
 
@@ -6,8 +23,8 @@
 #define __JSON_API_URL_      "https://json.ibroadcast.com/s/JSON/"
 #define __UPLOAD_URL_        "https://sync.ibroadcast.com"
 #define __UPLOAD_TYPE_       "Content-Type: multipart/form-data"
-#define __UA_                "User-Agent: MediaSync Lite for Linux v0.4.1"
-#define __METHOD_            "MediaSync Lite for Linux v0.4.1"
+#define __UA_                "User-Agent: MediaSync Lite for Linux v0.4.2"
+#define __METHOD_            "MediaSync Lite for Linux v0.4.2"
 
 #define __MUSIC_DIR          "/Music"
 
@@ -25,7 +42,7 @@
 #define __FORM_COLOR_                               "#464646"
 #define __COUNT_LABEL_TEMPLATE_                     "Uploaded: %zu files, %zu remaining. %zu files skipped (already uploaded)."
 
-typedef struct __login_data_ {
+typedef struct __user_profile_data_ {
     char *login;
     unsigned int login_len;
     char *pass;
@@ -37,7 +54,7 @@ typedef struct __login_data_ {
     char **supported_exts;
     char **md5s;
     unsigned int running_threads;
-} ibc_creds_t;
+} profile_data_t;
 
 typedef struct __memory_chunk_ {
     char *memory;
@@ -78,17 +95,17 @@ typedef struct __msl_label_t_ {
     GtkWidget *label;
 } msl_label_t;
 
-typedef struct __lf_btn_thread_data_t_ {
+typedef struct __lf_thread_data_t_ {
     msl_label_t *sbar;
     msl_button_t *btn;
     GtkWidget *window;
-} lf_btn_thread_data_t;
+} lf_thread_data_t;
 
-typedef struct __sf_btn_thread_data_t_ {
+typedef struct __sf_thread_data_t_ {
     msl_label_t *sbar;
     msl_button_t *btn;
     GtkWidget *window;
-} sf_btn_thread_data_t;
+} sf_thread_data_t;
 
 typedef struct __app_wins_t_ {
     GtkWidget *splash_win;

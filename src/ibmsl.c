@@ -1,3 +1,20 @@
+/* ibmsl.c ---
+ *
+ * Filename: ibmsl.c
+ * Description:
+ * Author: Andrey Andruschenko
+ * Maintainer:
+ * Created: Пт июл  3 15:52:15 2015 (+0300)
+ * Version:
+ * Last-Updated:
+ *           By:
+ *     Update #: 975
+ * URL:
+ * Keywords:
+ * Compatibility:
+ *
+ */
+
 #define _GNU_SOURCE
 #define _XOPEN_SOURCE 500
 
@@ -23,7 +40,7 @@
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
-extern ibc_creds_t icb;
+extern profile_data_t profile;
 extern f_list_t files;
 
 extern char* get_file_md5_hash(const char*);
@@ -32,15 +49,15 @@ extern char *get_start_dir(void);
 extern void *scan_dirs(void*);
 extern void *upload_to_ibroadcast(void*);
 
-gboolean on_login_button_clicked(GtkButton*, lf_btn_thread_data_t*);
-gboolean on_search_button_clicked(GtkButton*, sf_btn_thread_data_t*);
+gboolean on_login_button_clicked(GtkButton*, lf_thread_data_t*);
+gboolean on_search_button_clicked(GtkButton*, sf_thread_data_t*);
 gboolean on_login_win_destroy(GtkWidget*, gpointer);
 gboolean on_uploading_win_show(GtkWidget*, gpointer);
 gboolean on_finished_win_show(GtkWidget*, gpointer);
 gboolean destroy_widget(GtkWidget*, gpointer);
 gboolean destroy_object(GtkWidget*, gpointer);
 
-sf_btn_thread_data_t *fs;
+sf_thread_data_t *fs;
 
 gboolean uploading_pause;
 app_wins_t *wins;
@@ -54,25 +71,21 @@ static GtkWidget* create_ui(const char *path) {
 
     GtkWidget *fs_button;
     GError* error = NULL;
-    char *ui;
     GtkBuilder *builder = NULL;
     GdkRGBA win_color, fields_color, font_color;
     finished_data_t *finished_data;
-    lf_btn_thread_data_t *tc;
+    lf_thread_data_t *tc;
     up_win_data_t *uwd;
 
     gdk_rgba_parse(&win_color, __WIN_COLOR_);
     gdk_rgba_parse(&fields_color, __FORM_COLOR_);
     gdk_rgba_parse(&font_color, __FONT_COLOR_);
 
-    __MALLOC(ui, char*, sizeof(char) * (strlen(path) + strlen(__APP_UI_) + 1));
-    sprintf(ui, "%s%s", path, __APP_UI_);
-
     __MALLOC(wins, app_wins_t*, sizeof(app_wins_t));
 
     builder = gtk_builder_new();
 
-    if(!gtk_builder_add_from_file(builder, ui, &error)) {
+    if(!gtk_builder_add_from_file(builder, path, &error)) {
         g_critical("Can't load UI description. %s", error->message);
         g_error_free(error);
         return NULL;
@@ -88,7 +101,7 @@ static GtkWidget* create_ui(const char *path) {
 
     /* Build logon screen */
     /* Allocate memory for a data passed to login_to_service thread */
-    __MALLOC(tc, lf_btn_thread_data_t*, sizeof(lf_btn_thread_data_t));
+    __MALLOC(tc, lf_thread_data_t*, sizeof(lf_thread_data_t));
     __MALLOC(tc->btn, msl_button_t*, sizeof(msl_button_t));
     __MALLOC(tc->sbar, msl_label_t*, sizeof(msl_label_t));
     __MALLOC(tc->sbar->text, char*, sizeof(char) * __MAX_SBAR_TEXT_LEN_);
@@ -117,7 +130,7 @@ static GtkWidget* create_ui(const char *path) {
 
     /* Build folder selection screen */
     /* Allocate memory for a data passed to directory scan thread */
-    __MALLOC(fs, sf_btn_thread_data_t*, sizeof(sf_btn_thread_data_t));
+    __MALLOC(fs, sf_thread_data_t*, sizeof(sf_thread_data_t));
     __MALLOC(fs->btn, msl_button_t*, sizeof(msl_button_t));
     __MALLOC(fs->sbar, msl_label_t*, sizeof(msl_label_t));
     __MALLOC(fs->sbar->text, char*, sizeof(char) * __MAX_SBAR_TEXT_LEN_);
@@ -132,11 +145,11 @@ static GtkWidget* create_ui(const char *path) {
         g_critical("Error while retrieve filechooser_button_select_folder widget!\n");
         return NULL;
     }
-    if((icb.scan_dir = get_start_dir()) == NULL) {
+    if((profile.scan_dir = get_start_dir()) == NULL) {
         g_critical("Can't get start directory!");
         return NULL;
     }
-    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(fs_button), icb.scan_dir);
+    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(fs_button), profile.scan_dir);
 
     if(!(fs->btn->button = GTK_WIDGET(gtk_builder_get_object(builder, "button_search_select_folder")))) {
         g_critical ("Error while retrieve button_search_select_folder widget!\n");
@@ -214,7 +227,6 @@ static GtkWidget* create_ui(const char *path) {
     gtk_widget_override_background_color(wins->finished_win, GTK_STATE_NORMAL, &win_color);
 
     g_object_unref(builder);
-    free(ui);
 
     return wins->splash_win;
 }
@@ -247,15 +259,15 @@ gboolean on_pass_entry_insert_text(GtkEditable* edit, gpointer data) {
 
     const gchar* content = gtk_entry_get_text(GTK_ENTRY(edit));
 
-    if(icb.pass_len <= strlen(content)) {
-        if((icb.pass = (char*)realloc(icb.pass, sizeof(char) *(strlen(content) + 1))) == NULL) {
+    if(profile.pass_len <= strlen(content)) {
+        if((profile.pass = (char*)realloc(profile.pass, sizeof(char) *(strlen(content) + 1))) == NULL) {
             g_critical("Memory allocation error!");
             exit(EXIT_FAILURE);
         }
-        icb.pass_len = strlen(content) + 1;
+        profile.pass_len = strlen(content) + 1;
     }
 
-    strcpy(icb.pass, content);
+    strcpy(profile.pass, content);
     return TRUE;
 }
 
@@ -263,15 +275,15 @@ gboolean on_login_entry_insert_text(GtkEditable* edit, gpointer data) {
 
     const gchar* content = gtk_entry_get_text(GTK_ENTRY(edit));
 
-    if(icb.login_len <= strlen(content)) {
-        if((icb.login = (char*)realloc(icb.login, sizeof(char) *(strlen(content) + 1))) == NULL) {
+    if(profile.login_len <= strlen(content)) {
+        if((profile.login = (char*)realloc(profile.login, sizeof(char) *(strlen(content) + 1))) == NULL) {
             g_critical("Memory allocation error!");
             exit(EXIT_FAILURE);
         }
-        icb.login_len = strlen(content) + 1;
+        profile.login_len = strlen(content) + 1;
     }
 
-    strcpy(icb.login, content);
+    strcpy(profile.login, content);
     return TRUE;
 }
 
@@ -310,17 +322,17 @@ gboolean on_spin_button_changed(GtkSpinButton *spin, gpointer ptr) {
     GtkAdjustment *adjustment;
 
     adjustment = gtk_spin_button_get_adjustment(spin);
-    icb.uploaders = gtk_adjustment_get_value(adjustment);
+    profile.uploaders = gtk_adjustment_get_value(adjustment);
 
     return FALSE;
 }
 
-gboolean on_login_button_clicked(GtkButton *button, lf_btn_thread_data_t *ptr) {
+gboolean on_login_button_clicked(GtkButton *button, lf_thread_data_t *ptr) {
 
     pthread_t thread;
     pthread_attr_t thread_attr;
 
-    if(strlen(icb.login) == 0 || strlen(icb.pass) == 0) {
+    if(strlen(profile.login) == 0 || strlen(profile.pass) == 0) {
         gtk_label_set_text(GTK_LABEL(ptr->sbar->label), "One of mandatory fields is empty!");
         exit(EXIT_FAILURE);
     }
@@ -356,7 +368,7 @@ gboolean set_button_state(gpointer arg) {
 
 gboolean login_win_close(gpointer arg) {
 
-    lf_btn_thread_data_t *ptr = (lf_btn_thread_data_t *)arg;
+    lf_thread_data_t *ptr = (lf_thread_data_t *)arg;
 
     free(ptr->sbar->text);
     free(ptr->sbar);
@@ -378,20 +390,20 @@ gboolean on_folder_selected(GtkFileChooserButton *widget, gpointer ptr) {
         return FALSE;
     }
 
-    if(strlen(icb.scan_dir) <= strlen(selected)) {
-        if((icb.scan_dir = realloc(icb.scan_dir, sizeof(char) * (strlen(selected) + 1))) == NULL) {
+    if(strlen(profile.scan_dir) <= strlen(selected)) {
+        if((profile.scan_dir = realloc(profile.scan_dir, sizeof(char) * (strlen(selected) + 1))) == NULL) {
             g_critical("Memory allocation error!");
             exit(EXIT_FAILURE);
         }
     }
 
-    strcpy(icb.scan_dir, selected);
+    strcpy(profile.scan_dir, selected);
     free(selected);
 
     return TRUE;
 }
 
-gboolean on_search_button_clicked(GtkButton *button, sf_btn_thread_data_t *ptr) {
+gboolean on_search_button_clicked(GtkButton *button, sf_thread_data_t *ptr) {
 
     pthread_t thread;
     pthread_attr_t thread_attr;
@@ -475,7 +487,7 @@ gboolean on_uploading_win_show(GtkWidget *widget, gpointer arg) {
     int indicators, i = 0;
     PangoFontDescription *font_name;
 
-    indicators = (icb.uploaders < files.count) ? icb.uploaders : files.count;
+    indicators = (profile.uploaders < files.count) ? profile.uploaders : files.count;
 
     files.remaining = files.count;
     files.uploaded = 0;
@@ -658,8 +670,8 @@ int main (int argc, char **argv) {
         NULL
     };
 
-    __MALLOC(icb.login, char*, sizeof(char) * __MAX_LOGIN_LEN_);
-    __MALLOC(icb.pass, char*, sizeof(char) * __MAX_PASS_LEN_);
+    __MALLOC(profile.login, char*, sizeof(char) * __MAX_LOGIN_LEN_);
+    __MALLOC(profile.pass, char*, sizeof(char) * __MAX_PASS_LEN_);
 
     if(curl_global_init(CURL_GLOBAL_SSL) != 0) {
         g_critical("libcurl initialization error!");
@@ -672,11 +684,12 @@ int main (int argc, char **argv) {
     pthread_mutex_init(&rt_mtx, NULL);
 
     while(ui_search_paths[i] != NULL) {
-        if(access(ui_search_paths[i], R_OK | X_OK) == 0) {
-            __MALLOC(resource_path, char*, strlen(ui_search_paths[i]) + 1);
-            strcpy(resource_path, ui_search_paths[i]);
+        __MALLOC(resource_path, char*, sizeof(char) * (strlen(ui_search_paths[i]) + strlen(__APP_UI_) + 1));
+        sprintf(resource_path, "%s%s", ui_search_paths[i], __APP_UI_);
+        if(access(resource_path, F_OK | R_OK) == 0)
             break;
-        }
+        free(resource_path);
+        resource_path = NULL;
         i++;
     }
 
@@ -695,6 +708,7 @@ int main (int argc, char **argv) {
     gtk_widget_show(window);
     gtk_main();
 
+    free(resource_path);
     curl_global_cleanup();
 
     return 0;

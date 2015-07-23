@@ -1,3 +1,20 @@
+/* tools.c ---
+ *
+ * Filename: tools.c
+ * Description:
+ * Author: Andrey Andruschenko
+ * Maintainer:
+ * Created: Пн июл  6 17:01:44 2015 (+0300)
+ * Version:
+ * Last-Updated:
+ *           By:
+ *     Update #: 578
+ * URL:
+ * Keywords:
+ * Compatibility:
+ *
+ */
+
 #define _GNU_SOURCE
 #define _XOPEN_SOURCE 500
 
@@ -35,14 +52,14 @@ extern gboolean set_label_text(gpointer);
 extern gboolean finished_screen_show(gpointer);
 extern gboolean file_list_show(gpointer);
 
-extern lf_btn_thread_data_t *fs;
+extern lf_thread_data_t *fs;
 extern pthread_mutex_t uploaded_mtx;
 extern pthread_mutex_t files_mtx;
 extern pthread_mutex_t up_sbar_mtx;
 extern pthread_mutex_t rt_mtx;
 extern gboolean uploading_pause;
 
-ibc_creds_t icb = {
+profile_data_t profile = {
     .login = NULL,
     .login_len = __MAX_LOGIN_LEN_,
     .pass = NULL,
@@ -177,7 +194,7 @@ char* get_file_md5_hash(const char *fname) {
 
 void *login_to_service(void *arg) {
 
-    lf_btn_thread_data_t *ptr = (lf_btn_thread_data_t *)arg;
+    lf_thread_data_t *ptr = (lf_thread_data_t *)arg;
     json_t *root;
     json_error_t error;
     mem_ch_t *response;
@@ -191,8 +208,8 @@ void *login_to_service(void *arg) {
     ptr->btn->state = TRUE;
 
 /* Build request JSON object */
-    if((root = json_pack("{ss, ss, ss, ss, ss, si}", "mode", "status", "email_address", icb.login, \
-                         "password", icb.pass, "version", ".1", "client", "ibroadcast-c-uploader",\
+    if((root = json_pack("{ss, ss, ss, ss, ss, si}", "mode", "status", "email_address", profile.login, \
+                         "password", profile.pass, "version", ".1", "client", "ibroadcast-c-uploader",\
                          "supported_types", 1)) == NULL) {
         __STRNCPY(ptr->sbar->text, "Failed to build JSON object!", __MAX_SBAR_TEXT_LEN_);
         gdk_threads_add_idle(set_label_text, ptr->sbar);
@@ -254,24 +271,24 @@ void *login_to_service(void *arg) {
         g_critical("Can't get auth token from JSON object!\n");
         return FALSE;
     }
-    __MALLOC(icb.token, char*, sizeof(char) * (strlen(ent_value) + 1));
-    strcpy(icb.token, ent_value);
+    __MALLOC(profile.token, char*, sizeof(char) * (strlen(ent_value) + 1));
+    strcpy(profile.token, ent_value);
 
     if((ent_value = (char*)json_string_value(json_object_get(json_object_get(root, "user"), "id"))) == NULL) {
         __STRNCPY(ptr->sbar->text, "Can't get user ID from JSON object!", __MAX_SBAR_TEXT_LEN_);
         gdk_threads_add_idle(set_label_text, ptr->sbar);
         gdk_threads_add_idle(set_button_state, ptr->btn);
         g_critical("Can't get user ID from JSON object!\n");
-        free(icb.token);
+        free(profile.token);
         return FALSE;
     }
-    __MALLOC(icb.user_id, char*, sizeof(char) * (strlen(ent_value) + 1));
-    strcpy(icb.user_id, ent_value);
+    __MALLOC(profile.user_id, char*, sizeof(char) * (strlen(ent_value) + 1));
+    strcpy(profile.user_id, ent_value);
 
     __STRNCPY(ptr->sbar->text, "Success. Retrieving supported extensions...", __MAX_SBAR_TEXT_LEN_);
     gdk_threads_add_idle(set_label_text, ptr->sbar);
 
-    __MALLOC(icb.supported_exts, char**, sizeof(char*) * (json_array_size(json_object_get(root, "supported")) + 1));
+    __MALLOC(profile.supported_exts, char**, sizeof(char*) * (json_array_size(json_object_get(root, "supported")) + 1));
 
     for(i = 0; i < json_array_size(json_object_get(root, "supported")); i++) {
         if((ent_value = (char*)json_string_value(json_object_get(json_array_get(json_object_get(root, "supported"), i), "extension"))) == NULL) {
@@ -279,31 +296,31 @@ void *login_to_service(void *arg) {
             gdk_threads_add_idle(set_label_text, ptr->sbar);
             gdk_threads_add_idle(set_button_state, ptr->btn);
             g_critical("Can't get extention from JSON object!");
-            free(icb.token);
-            free(icb.user_id);
+            free(profile.token);
+            free(profile.user_id);
             return FALSE;
         }
 
-        __MALLOC(icb.supported_exts[i], char*, sizeof(char) * (strlen(ent_value) + 1));
-        strcpy(icb.supported_exts[i], ent_value);
+        __MALLOC(profile.supported_exts[i], char*, sizeof(char) * (strlen(ent_value) + 1));
+        strcpy(profile.supported_exts[i], ent_value);
     }
 
-    icb.supported_exts[json_array_size(json_object_get(root, "supported"))] = NULL;
+    profile.supported_exts[json_array_size(json_object_get(root, "supported"))] = NULL;
     json_decref(root);
 
     /* Get list of MD5 hashes from iBroadcast.com */
     __STRNCPY(ptr->sbar->text, "Get file list from iBroadcast.com...", __MAX_SBAR_TEXT_LEN_);
     gdk_threads_add_idle(set_label_text, ptr->sbar);
 
-    __MALLOC(data, char*, sizeof(char) * (strlen(icb.user_id) + strlen(icb.token) + strlen("user_id=") + strlen("token=") + 2));
-    sprintf(data, "user_id=%s&token=%s",icb.user_id, icb.token);
+    __MALLOC(data, char*, sizeof(char) * (strlen(profile.user_id) + strlen(profile.token) + strlen("user_id=") + strlen("token=") + 2));
+    sprintf(data, "user_id=%s&token=%s",profile.user_id, profile.token);
 
     if((response = request(__UPLOAD_URL_, data, "application/x-www-form-urlencoded")) == NULL) {
         __STRNCPY(ptr->sbar->text, "Error when retrieve MD5 list from service!", __MAX_SBAR_TEXT_LEN_);
         gdk_threads_add_idle(set_label_text, ptr->sbar);
         gdk_threads_add_idle(set_button_state, ptr->btn);
-        free(icb.token);
-        free(icb.user_id);
+        free(profile.token);
+        free(profile.user_id);
         g_critical("Error when retrieve MD5 list from service!\n");
         return FALSE;
     }
@@ -312,8 +329,8 @@ void *login_to_service(void *arg) {
         __STRNCPY(ptr->sbar->text, "Reply parsing error!", __MAX_SBAR_TEXT_LEN_);
         gdk_threads_add_idle(set_label_text, ptr->sbar);
         gdk_threads_add_idle(set_button_state, ptr->btn);
-        free(icb.token);
-        free(icb.user_id);
+        free(profile.token);
+        free(profile.user_id);
         g_critical("error in reply: on line %d: %s", error.line, error.text);
         return FALSE;
     }
@@ -326,8 +343,8 @@ void *login_to_service(void *arg) {
         __STRNCPY(ptr->sbar->text, "Malformed JSON object!", __MAX_SBAR_TEXT_LEN_);
         gdk_threads_add_idle(set_label_text, ptr->sbar);
         gdk_threads_add_idle(set_button_state, ptr->btn);
-        free(icb.token);
-        free(icb.user_id);
+        free(profile.token);
+        free(profile.user_id);
         g_critical("Malformed JSON object:\n%s", json_dumps(root, JSON_INDENT(4)));
         return FALSE;
     }
@@ -336,13 +353,13 @@ void *login_to_service(void *arg) {
         __STRNCPY(ptr->sbar->text, json_string_value(json_object_get(root, "message")), __MAX_SBAR_TEXT_LEN_);
         gdk_threads_add_idle(set_label_text, ptr->sbar);
         gdk_threads_add_idle(set_button_state, ptr->btn);
-        free(icb.token);
-        free(icb.user_id);
+        free(profile.token);
+        free(profile.user_id);
         g_critical("%s\n", json_string_value(json_object_get(root, "message")));
         return FALSE;
     }
 
-    __MALLOC(icb.md5s, char**, sizeof(char*) * (json_array_size(json_object_get(root, "md5")) + 1));
+    __MALLOC(profile.md5s, char**, sizeof(char*) * (json_array_size(json_object_get(root, "md5")) + 1));
     j = 0;
 
     for(i = 0; i < json_array_size(json_object_get(root, "md5")); i++) {
@@ -355,11 +372,11 @@ void *login_to_service(void *arg) {
             g_critical("%s", json_dumps(root, JSON_INDENT(4)));
             continue;
         }
-        __MALLOC(icb.md5s[j], char*, sizeof(char) * (strlen(ent_value) + 1));
-        strcpy(icb.md5s[j], ent_value);
+        __MALLOC(profile.md5s[j], char*, sizeof(char) * (strlen(ent_value) + 1));
+        strcpy(profile.md5s[j], ent_value);
         j++;
     }
-    icb.md5s[j] = NULL;
+    profile.md5s[j] = NULL;
     json_decref(root);
 
     gdk_threads_add_idle(login_win_close, ptr);
@@ -389,7 +406,7 @@ char *get_start_dir(void) {
 
 void *scan_dirs(void *arg) {
 
-    sf_btn_thread_data_t *ptr = (sf_btn_thread_data_t *)arg;
+    sf_thread_data_t *ptr = (sf_thread_data_t *)arg;
 
     ptr->btn->state = TRUE;
 
@@ -398,7 +415,7 @@ void *scan_dirs(void *arg) {
     gdk_threads_add_idle(set_label_text, ptr->sbar);
 
 
-    if(nftw(icb.scan_dir, nftw_cb, 20, FTW_PHYS) == -1) {
+    if(nftw(profile.scan_dir, nftw_cb, 20, FTW_PHYS) == -1) {
         __STRNCPY(ptr->sbar->text, "Error when directory traversal!", __MAX_SBAR_TEXT_LEN_);
         gdk_threads_add_idle(set_label_text, ptr->sbar);
         gdk_threads_add_idle(set_button_state, ptr->btn);
@@ -446,17 +463,17 @@ static int nftw_cb(const char *fpath, const struct stat *sb,
 
     if(tflag == FTW_F && access(fpath, R_OK) == 0) {
 
-        for(i=0;icb.supported_exts[i] != NULL;i++) {
+        for(i=0;profile.supported_exts[i] != NULL;i++) {
 
-            ext = (char *)(fpath + (size_t)(strlen(fpath) - strlen(icb.supported_exts[i])));
+            ext = (char *)(fpath + (size_t)(strlen(fpath) - strlen(profile.supported_exts[i])));
             /* Skip, if file extension is not supported */
-            if(strcasecmp(ext, icb.supported_exts[i]) != 0)
+            if(strcasecmp(ext, profile.supported_exts[i]) != 0)
                 continue;
             if((md5 = get_file_md5_hash(fpath)) == NULL)
                 return 0;
             /* Skip file if it exists on server */
-            for(k = 0; icb.md5s[k] != NULL; k++) {
-                if(strcasecmp(md5, icb.md5s[k]) == 0) {
+            for(k = 0; profile.md5s[k] != NULL; k++) {
+                if(strcasecmp(md5, profile.md5s[k]) == 0) {
                     files.skipped++;
                     free(md5);
                     return 0;
@@ -552,7 +569,7 @@ void *upload_to_ibroadcast(void *arg) {
     }
 
     pthread_mutex_lock(&rt_mtx);
-    icb.running_threads++;
+    profile.running_threads++;
     pthread_mutex_unlock(&rt_mtx);
 
     /* Data for a progress indicator */
@@ -620,10 +637,10 @@ void *upload_to_ibroadcast(void *arg) {
                      CURLFORM_COPYCONTENTS, __METHOD_, CURLFORM_END);
 
         curl_formadd(&post, &last, CURLFORM_COPYNAME, "user_id",
-                     CURLFORM_COPYCONTENTS, icb.user_id, CURLFORM_END);
+                     CURLFORM_COPYCONTENTS, profile.user_id, CURLFORM_END);
 
         curl_formadd(&post, &last, CURLFORM_COPYNAME, "token",
-                     CURLFORM_COPYCONTENTS, icb.token, CURLFORM_END);
+                     CURLFORM_COPYCONTENTS, profile.token, CURLFORM_END);
 
         curl_easy_setopt(curl, CURLOPT_HTTPPOST, post);
 
@@ -638,8 +655,8 @@ void *upload_to_ibroadcast(void *arg) {
                 gdk_threads_add_idle(set_label_text, tc->sbar);
 
                 pthread_mutex_lock(&rt_mtx);
-                icb.running_threads--;
-                if(icb.running_threads == 0)
+                profile.running_threads--;
+                if(profile.running_threads == 0)
                     gdk_threads_add_idle(finished_screen_show, NULL);
                 pthread_mutex_unlock(&rt_mtx);
 
@@ -652,8 +669,8 @@ void *upload_to_ibroadcast(void *arg) {
                 gdk_threads_add_idle(set_label_text, tc->sbar);
 
                 pthread_mutex_lock(&rt_mtx);
-                icb.running_threads--;
-                if(icb.running_threads == 0)
+                profile.running_threads--;
+                if(profile.running_threads == 0)
                     gdk_threads_add_idle(finished_screen_show, NULL);
                 pthread_mutex_unlock(&rt_mtx);
 
@@ -707,8 +724,8 @@ void *upload_to_ibroadcast(void *arg) {
     free(tc);
 
     pthread_mutex_lock(&rt_mtx);
-    icb.running_threads--;
-    if(icb.running_threads == 0)
+    profile.running_threads--;
+    if(profile.running_threads == 0)
         gdk_threads_add_idle(finished_screen_show, NULL);
     pthread_mutex_unlock(&rt_mtx);
 

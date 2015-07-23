@@ -1,4 +1,6 @@
 SUBDIRS=src
+INSTALL_PATH=/usr/local/share/mediasynclite
+RESOURCES_PATH=share/ui/*
 
 default: all
 
@@ -12,7 +14,4 @@ clean:
 
 install:
 	install -s -D mediasynclite /usr/local/bin
-	install -m 644 -D share/ui/ui.glade /usr/local/share/mediasynclite/ui.glade
-	install -m 644 -D share/ui/__head_.png /usr/local/share/mediasynclite/__head_.png
-	install -m 644 -D share/ui/icon.png /usr/local/share/mediasynclite/icon.png
-	install -m 644 -D share/ui/splash.jpg /usr/local/share/mediasynclite/splash.jpg
+	@for file in $(RESOURCES_PATH); do (echo "Install: " $$file "to:" $(INSTALL_PATH)/`basename $$file`; if [ -f $$file ]; then install -m 644 -D $$file $(INSTALL_PATH)/`basename $$file`; fi); done
