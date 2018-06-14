@@ -9,7 +9,7 @@ iBroadcast Media Sync Lite v0.4.2
     - on Ubuntu, use libcurl4-openssl-dev
     - on Fedora, use libcurl-devel
 - openssl
-- openssl-devel
+- libssl-dev
 - libjansson (available in ./jansson-2.7)
     - on Ubuntu/Debian, use libjansson-dev
 
