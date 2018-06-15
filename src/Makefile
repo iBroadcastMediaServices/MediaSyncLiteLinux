@@ -8,9 +8,9 @@ BIN_NAME = mediasynclite
 CFLAGS = -Wall -Wextra -Wundef -Wshadow -Wpointer-arith -Wbad-function-cast \
          -Wcast-align -Wwrite-strings -Wredundant-decls -Wformat-nonliteral \
          -Wnested-externs -pedantic -std=gnu99 -O3 -pthread \
-         -D_REENTERANT `pkg-config --cflags gtk+-3.0 libcurl libssl`
+         -D_REENTERANT `pkg-config --cflags gtk+-3.0 libcurl libssl libcrypto`
 
-LDFLAGS = `pkg-config --libs gtk+-3.0 libcurl libssl` -ljansson -lpthread -rdynamic
+LDFLAGS = `pkg-config --libs gtk+-3.0 libcurl libssl libcrypto` -ljansson -lpthread -rdynamic
 
 SRCDIR = $(PRJDIR)/src
 
