@@ -87,7 +87,7 @@ static mem_ch_t* request(const char *url, const char *data, const char *type) {
     CURLcode status;
     struct curl_slist *headers = NULL;
     char *c_type = NULL;
-    int code;
+    long code;
     mem_ch_t *chunk;
 
     chunk = malloc(sizeof(mem_ch_t));
@@ -542,7 +542,7 @@ static int progress_cb(void *arg, double dltotal, double dlnow,
 void *upload_to_ibroadcast(void *arg) {
 
     uploader_data_t *tc = (uploader_data_t *)arg;
-    int code;
+    long code;
     size_t i;
     json_t *root;
     json_error_t j_error;
