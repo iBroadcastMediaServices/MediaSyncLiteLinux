@@ -28,3 +28,6 @@ or to install as regular user:
 - sudo make install
 
 Application will be installed in /usr/local/bin directory.
+
+** Known issue:
+After uploading files, the app must be restarted to prevent those files from being uploaded again as duplicates.
