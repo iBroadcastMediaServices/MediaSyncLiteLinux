@@ -181,7 +181,7 @@ static GtkWidget* create_ui(const char *path) {
 
     __MALLOC(uwd, up_win_data_t*, sizeof(up_win_data_t));
     __MALLOC(uwd->c_label, msl_label_t*, sizeof(msl_label_t));
-    __MALLOC(uwd->c_label->text, char*, sizeof(char) * (strlen("Uploaded:       files,       remaining.       files skipped(already uploaded).") + 1));
+    __MALLOC(uwd->c_label->text, char*, sizeof(char) * (strlen("Uploaded:       files,       remaining.       files skipped(already uploaded).        errored.") + 1));
     __MALLOC(uwd->sbar, msl_label_t*, sizeof(msl_label_t));
     __MALLOC(uwd->sbar->text, char*, sizeof(char) * __MAX_SBAR_TEXT_LEN_);
 
@@ -511,7 +511,7 @@ gboolean on_uploading_win_show(GtkWidget *widget, gpointer arg) {
 
     gtk_container_add(GTK_CONTAINER(ptr->container), grid);
 
-    sprintf(ptr->c_label->text, __COUNT_LABEL_TEMPLATE_, files.uploaded, files.count, files.skipped);
+    sprintf(ptr->c_label->text, __COUNT_LABEL_TEMPLATE_, files.uploaded, files.count, files.skipped, files.errored);
 
     gtk_label_set_text(GTK_LABEL(ptr->c_label->label), ptr->c_label->text);
 
@@ -641,6 +641,7 @@ gboolean on_hide_result_win(GtkWidget *widget, gpointer ptr) {
     files.skipped = 0;
     files.uploaded = 0;
     files.remaining = 0;
+    files.errored = 0;
 
     return FALSE;
 }

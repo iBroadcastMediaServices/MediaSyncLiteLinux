@@ -40,7 +40,7 @@
 #define __WIN_COLOR_                                "#000000"
 #define __FONT_COLOR_                               "#dddddd"
 #define __FORM_COLOR_                               "#464646"
-#define __COUNT_LABEL_TEMPLATE_                     "Uploaded: %zu files, %zu remaining. %zu files skipped (already uploaded)."
+#define __COUNT_LABEL_TEMPLATE_                     "Uploaded: %zu files, %zu remaining. %zu files skipped (already uploaded). %zu errored."
 
 typedef struct __user_profile_data_ {
     char *login;
@@ -72,6 +72,7 @@ typedef struct __file_list_ {
     size_t uploaded;
     size_t remaining;
     size_t idx;
+    size_t errored;
     f_info_t **list;
 } f_list_t;
 

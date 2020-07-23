@@ -78,6 +78,7 @@ f_list_t files = {
     .count = 0,
     .skipped = 0,
     .uploaded = 0,
+    .errored = 0,
     .list = NULL
 };
 
@@ -128,13 +129,19 @@ static mem_ch_t* request(const char *url, const char *data, const char *type) {
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &code);
 
     free(c_type);
+
     curl_easy_cleanup(curl);
+
     curl_slist_free_all(headers);
 
-    if(code != 200)
+
+    if(code != 200) {
+
         return NULL;
-    else
+    } else {
+
         return chunk;
+    }
 }
 
 /* Write memory callback function*/
@@ -150,7 +157,8 @@ static size_t wc_cb(void *contents, size_t size, size_t nmemb,
         return 0;
     }
 
-    memcpy(&(mem->memory[mem->size]), contents, realsize);
+    char *memory = mem->memory;
+    memcpy(&memory[mem->size], contents, realsize);
     mem->size += realsize;
     mem->memory[mem->size] = 0;
 
@@ -193,6 +201,8 @@ char* get_file_md5_hash(const char *fname) {
 }
 
 void *login_to_service(void *arg) {
+
+    g_message("login()");
 
     lf_thread_data_t *ptr = (lf_thread_data_t *)arg;
     json_t *root;
@@ -380,6 +390,8 @@ void *login_to_service(void *arg) {
     json_decref(root);
 
     gdk_threads_add_idle(login_win_close, ptr);
+    
+    g_message(" - success");
 
     return NULL;
 }
@@ -406,6 +418,8 @@ char *get_start_dir(void) {
 
 void *scan_dirs(void *arg) {
 
+    g_message("Scanning directory: %s", profile.scan_dir);
+
     sf_thread_data_t *ptr = (sf_thread_data_t *)arg;
 
     ptr->btn->state = TRUE;
@@ -414,6 +428,12 @@ void *scan_dirs(void *arg) {
 
     gdk_threads_add_idle(set_label_text, ptr->sbar);
 
+    files.count = 0;
+    files.skipped = 0;
+    files.uploaded = 0;
+    files.remaining = 0;
+    files.idx = 0;
+    files.errored = 0;
 
     if(nftw(profile.scan_dir, nftw_cb, 20, FTW_PHYS) == -1) {
         __STRNCPY(ptr->sbar->text, "Error when directory traversal!", __MAX_SBAR_TEXT_LEN_);
@@ -541,8 +561,10 @@ static int progress_cb(void *arg, double dltotal, double dlnow,
 
 void *upload_to_ibroadcast(void *arg) {
 
+    g_message("Thread: begin_upload()");
+
     uploader_data_t *tc = (uploader_data_t *)arg;
-    long code;
+    int code;
     size_t i;
     json_t *root;
     json_error_t j_error;
@@ -591,30 +613,39 @@ void *upload_to_ibroadcast(void *arg) {
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 1L);
 
     do {
-
+        
+        g_message("upload(%i, %s)", (int)files.idx, files.list[files.idx]->name);
+        
         chunk->memory = malloc(1);
         chunk->size = 0;
 
+        // Get next file
         pthread_mutex_lock(&files_mtx);
 
-        for(i = files.idx; i < files.count; i++) {
+        i = files.idx;
+        ++files.idx;
 
-            files.idx++;
+        // Skip over nulls
 
-            if(files.list[i] != NULL) {
-                __MALLOC(tc->name_label->text, char*, sizeof(char) *(strlen(files.list[i]->name) + 1));
-                strcpy(tc->name_label->text, files.list[i]->name);
-                free(files.list[i]->name);
-                free(files.list[i]->md5);
-                free(files.list[i]);
-                files.list[i] = NULL;
-                break;
-            }
+        if(files.list[i] == NULL) {
+            g_message(" - file is null, skipping");
+            continue;
         }
+        
+        
+        __MALLOC(tc->name_label->text, char*, sizeof(char) *(strlen(files.list[i]->name) + 1));
+        strcpy(tc->name_label->text, files.list[i]->name);
+        free(files.list[i]->name);
+        free(files.list[i]->md5);
+        free(files.list[i]);
+        files.list[i] = NULL;
 
         pthread_mutex_unlock(&files_mtx);
 
-        if(tc->name_label->text == NULL) continue;
+        if(tc->name_label->text == NULL) {
+            g_message(" - file path is null, skipping");
+            continue;
+        }
 
         gdk_threads_add_idle(set_label_text, tc->name_label);
 
@@ -645,12 +676,15 @@ void *upload_to_ibroadcast(void *arg) {
         curl_easy_setopt(curl, CURLOPT_HTTPPOST, post);
 
         status = curl_easy_perform(curl);
-
+        
+        
         if(status == 0) {
 
             curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &code);
 
             if((root = json_loads(chunk->memory, 0, &j_error)) == NULL) {
+                g_critical("Error parsing JSON: %s", j_error.text);
+                
                 __STRNCPY(tc->sbar->text, "Error in service reply!", __MAX_SBAR_TEXT_LEN_);
                 gdk_threads_add_idle(set_label_text, tc->sbar);
 
@@ -678,6 +712,8 @@ void *upload_to_ibroadcast(void *arg) {
             }
 
             message = g_filename_to_utf8(json_string_value(json_object_get(root, "message")), -1, NULL, &writen, &error);
+            
+            g_message(" - JSON response message: %s", message);
 
             if(error != NULL) {
                 g_warning("%s", error->message);
@@ -692,7 +728,7 @@ void *upload_to_ibroadcast(void *arg) {
             }
 
             pthread_mutex_lock(&uploaded_mtx);
-            sprintf(tc->count_l->text, __COUNT_LABEL_TEMPLATE_, ++files.uploaded, --files.remaining, files.skipped);
+            sprintf(tc->count_l->text, __COUNT_LABEL_TEMPLATE_, ++files.uploaded, --files.remaining, files.skipped, files.errored);
             gdk_threads_add_idle(set_label_text, tc->count_l);
             pthread_mutex_unlock(&uploaded_mtx);
 
@@ -703,6 +739,10 @@ void *upload_to_ibroadcast(void *arg) {
             gdk_threads_add_idle(set_label_text, tc->sbar);
             pthread_mutex_unlock(&up_sbar_mtx);
             g_critical("%s", curl_easy_strerror(status));
+            
+            pthread_mutex_lock(&uploaded_mtx);
+            ++files.errored;
+            pthread_mutex_unlock(&uploaded_mtx);
         }
 
         curl_formfree(post);
