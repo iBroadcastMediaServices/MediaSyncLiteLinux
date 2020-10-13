@@ -435,7 +435,7 @@ void *scan_dirs(void *arg) {
     files.idx = 0;
     files.errored = 0;
 
-    if(nftw(profile.scan_dir, nftw_cb, 20, FTW_PHYS) == -1) {
+    if(nftw(profile.scan_dir, nftw_cb, 20, 0) == -1) {
         __STRNCPY(ptr->sbar->text, "Error when directory traversal!", __MAX_SBAR_TEXT_LEN_);
         gdk_threads_add_idle(set_label_text, ptr->sbar);
         gdk_threads_add_idle(set_button_state, ptr->btn);
