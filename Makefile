@@ -1,6 +1,10 @@
 SUBDIRS=src
-INSTALL_PATH=/usr/local/share/mediasynclite
 RESOURCES_PATH=share/ui/*
+
+# PREFIX is environment variable, but if it is not set, then set default value
+ifeq ($(PREFIX),)
+    PREFIX := /usr
+endif
 
 default: all
 
@@ -13,5 +17,5 @@ clean:
 	@for dir in $(SUBDIRS); do (cd $$dir; $(MAKE) clean); done
 
 install:
-	install -s -D mediasynclite /usr/local/bin
-	@for file in $(RESOURCES_PATH); do (echo "Install: " $$file "to:" $(INSTALL_PATH)/`basename $$file`; if [ -f $$file ]; then install -m 644 -D $$file $(INSTALL_PATH)/`basename $$file`; fi); done
+	install -s -D mediasynclite $(DESTDIR)$(PREFIX)/bin/mediasynclite
+	@for file in $(RESOURCES_PATH); do (echo "Install: " $$file "to:" $(DESTDIR)$(PREFIX)/share/mediasynclite/`basename $$file`; if [ -f $$file ]; then install -m 644 -D $$file $(DESTDIR)$(PREFIX)/share/mediasynclite/`basename $$file`; fi); done
