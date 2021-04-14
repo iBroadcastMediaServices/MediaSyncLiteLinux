@@ -1,0 +1,3 @@
+shlibs:Depends=libc6 (>= 2.14), libcurl4 (>= 7.18.0), libglib2.0-0 (>= 2.12.0), libgtk-3-0 (>= 3.0.0), libjansson4 (>= 2.0.1), libpango-1.0-0 (>= 1.14.0), libssl1.1 (>= 1.1.0)
+misc:Depends=
+misc:Pre-Depends=
