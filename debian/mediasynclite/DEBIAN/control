@@ -1,0 +1,10 @@
+Package: mediasynclite
+Version: 0.4.2-1
+Architecture: amd64
+Maintainer: flagoworld <ryan@ibroadcast.com>
+Installed-Size: 154
+Depends: openssl, libgtk-3-0
+Section: multimedia
+Priority: optional
+Homepage: https://github.com/iBroadcastMediaServices/MediaSyncLiteLinux
+Description: Upload music from your local machine to iBroadcast cloud

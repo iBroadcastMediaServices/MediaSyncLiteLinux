@@ -1,0 +1,1035 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.18.3 -->
+<interface>
+  <requires lib="gtk+" version="3.10"/>
+  <object class="GtkAdjustment" id="adjustment_uploaders">
+    <property name="lower">3</property>
+    <property name="upper">6</property>
+    <property name="value">3</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">1</property>
+  </object>
+  <object class="GtkWindow" id="filelist_win">
+    <property name="name">filelist_win</property>
+    <property name="can_focus">False</property>
+    <property name="hexpand">False</property>
+    <property name="vexpand">False</property>
+    <property name="title" translatable="yes">iBroadcast MediaSync Lite - Files</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window_position">center-always</property>
+    <property name="default_width">800</property>
+    <property name="default_height">600</property>
+    <property name="icon">icon.png</property>
+    <property name="gravity">center</property>
+    <signal name="destroy" handler="gtk_main_quit" swapped="no"/>
+    <signal name="key-press-event" handler="catch_escape_key_press_event" swapped="no"/>
+    <signal name="show" handler="change_lable_on_filelist_show" object="filelist_count_label" swapped="no"/>
+    <signal name="show" handler="on_filelist_win_show" object="filelist_textview" swapped="no"/>
+    <child>
+      <object class="GtkBox" id="filelist_box_all">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="margin_bottom">5</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkImage" id="filelist_head_img">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="pixbuf">__head_.png</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="filelist_count_label">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_top">10</property>
+            <property name="margin_bottom">15</property>
+            <property name="hexpand">False</property>
+            <property name="vexpand">False</property>
+            <property name="xalign">0</property>
+            <property name="xpad">45</property>
+            <property name="label" translatable="yes">files count</property>
+            <property name="wrap">True</property>
+            <property name="max_width_chars">60</property>
+            <attributes>
+              <attribute name="font-desc" value="Arial 10"/>
+              <attribute name="style" value="normal"/>
+              <attribute name="weight" value="bold"/>
+              <attribute name="foreground" value="#dddddddddddd"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="filelist_scrolled">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="margin_left">45</property>
+            <property name="margin_right">45</property>
+            <property name="margin_top">5</property>
+            <property name="margin_bottom">5</property>
+            <property name="hexpand">False</property>
+            <property name="vexpand">False</property>
+            <property name="shadow_type">in</property>
+            <property name="min_content_width">15</property>
+            <property name="min_content_height">150</property>
+            <child>
+              <object class="GtkTextView" id="filelist_textview">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="hexpand">False</property>
+                <property name="vexpand">False</property>
+                <property name="editable">False</property>
+                <property name="wrap_mode">word</property>
+                <property name="left_margin">3</property>
+                <property name="right_margin">3</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkGrid" id="filelist_grid">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_left">45</property>
+            <property name="margin_right">5</property>
+            <property name="margin_top">5</property>
+            <property name="margin_bottom">10</property>
+            <property name="row_homogeneous">True</property>
+            <child>
+              <object class="GtkButton" id="filelist_button">
+                <property name="label" translatable="yes">Begin Upload</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="margin_bottom">3</property>
+                <signal name="clicked" handler="on_begin_uploading_button_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkGrid" id="filelist_uploaders_grid">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_left">20</property>
+                <child>
+                  <object class="GtkLabel" id="filelist_uploaders_label">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="xalign">0</property>
+                    <property name="xpad">5</property>
+                    <property name="label" translatable="yes">Simultaneous uploaders</property>
+                    <attributes>
+                      <attribute name="font-desc" value="Arial 10"/>
+                      <attribute name="style" value="normal"/>
+                      <attribute name="weight" value="bold"/>
+                      <attribute name="foreground" value="#dddddddddddd"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSpinButton" id="filelist_uploaders_spinbutton">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="margin_left">5</property>
+                    <property name="hexpand">False</property>
+                    <property name="vexpand">False</property>
+                    <property name="adjustment">adjustment_uploaders</property>
+                    <property name="digits">1</property>
+                    <property name="snap_to_ticks">True</property>
+                    <property name="numeric">True</property>
+                    <property name="wrap">True</property>
+                    <property name="value">3</property>
+                    <signal name="value-changed" handler="on_spin_button_changed" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkFileFilter" id="filefilter_folder_select">
+    <mime-types>
+      <mime-type>text/directory</mime-type>
+      <mime-type>inode/directory</mime-type>
+    </mime-types>
+  </object>
+  <object class="GtkWindow" id="select_folder_win">
+    <property name="can_focus">True</property>
+    <property name="has_focus">True</property>
+    <property name="is_focus">True</property>
+    <property name="hexpand">False</property>
+    <property name="vexpand">False</property>
+    <property name="title" translatable="yes">iBroadcast MediaSync Lite - Select folder</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window_position">center</property>
+    <property name="default_width">800</property>
+    <property name="icon">icon.png</property>
+    <property name="gravity">center</property>
+    <signal name="destroy" handler="gtk_main_quit" swapped="no"/>
+    <signal name="key-press-event" handler="catch_escape_key_press_event" swapped="no"/>
+    <child>
+      <object class="GtkBox" id="box1_sf">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="margin_left">1</property>
+        <property name="margin_right">1</property>
+        <property name="margin_top">1</property>
+        <property name="margin_bottom">1</property>
+        <property name="border_width">1</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkImage" id="head_img_select_folder">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="pixbuf">__head_.png</property>
+            <signal name="destroy" handler="gtk_main_quit" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="head_label_select_folder">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_top">10</property>
+            <property name="margin_bottom">15</property>
+            <property name="xalign">0</property>
+            <property name="xpad">45</property>
+            <property name="label" translatable="yes">Select a folder to search for a music.</property>
+            <property name="wrap">True</property>
+            <property name="max_width_chars">60</property>
+            <attributes>
+              <attribute name="font-desc" value="Arial 10"/>
+              <attribute name="style" value="normal"/>
+              <attribute name="weight" value="bold"/>
+              <attribute name="foreground" value="#dddddddddddd"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkGrid" id="grid1_sf">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_left">45</property>
+            <property name="hexpand">False</property>
+            <property name="vexpand">False</property>
+            <property name="row_homogeneous">True</property>
+            <child>
+              <object class="GtkBox" id="box2_sf">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_top">2</property>
+                <property name="margin_bottom">10</property>
+                <property name="hexpand">False</property>
+                <property name="vexpand">False</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">3</property>
+                <property name="homogeneous">True</property>
+                <child>
+                  <object class="GtkFileChooserButton" id="filechooser_button_select_folder">
+                    <property name="name">select_folder_button</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_bottom">5</property>
+                    <property name="hexpand">False</property>
+                    <property name="vexpand">False</property>
+                    <property name="action">select-folder</property>
+                    <property name="create_folders">False</property>
+                    <property name="filter">filefilter_folder_select</property>
+                    <property name="title" translatable="yes">Select a music folder</property>
+                    <signal name="file-set" handler="on_folder_selected" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="button_search_select_folder">
+                    <property name="label" translatable="yes">         Search         </property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="halign">start</property>
+                    <property name="valign">end</property>
+                    <property name="margin_top">5</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="selectf_scan_label">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_top">15</property>
+            <property name="margin_bottom">15</property>
+            <property name="xalign">0</property>
+            <property name="xpad">45</property>
+            <property name="ellipsize">end</property>
+            <property name="single_line_mode">True</property>
+            <property name="max_width_chars">60</property>
+            <attributes>
+              <attribute name="font-desc" value="Arial 10"/>
+              <attribute name="style" value="normal"/>
+              <attribute name="weight" value="thin"/>
+              <attribute name="foreground" value="#dddddddddddd"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="finished_win">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">iBroadcast MediaSync Lite - Complete</property>
+    <property name="resizable">False</property>
+    <property name="window_position">center</property>
+    <property name="icon">icon.png</property>
+    <property name="gravity">center</property>
+    <signal name="destroy" handler="gtk_main_quit" swapped="no"/>
+    <signal name="hide" handler="on_hide_result_win" swapped="no"/>
+    <signal name="key-press-event" handler="catch_escape_key_press_event" swapped="no"/>
+    <child>
+      <object class="GtkBox" id="finished_head_box">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkImage" id="finished_head_img">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="pixbuf">__head_.png</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkFrame" id="finished_result_frame">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_left">45</property>
+            <property name="margin_right">45</property>
+            <property name="margin_top">1</property>
+            <property name="margin_bottom">1</property>
+            <property name="hexpand">False</property>
+            <property name="vexpand">True</property>
+            <property name="label_xalign">0</property>
+            <property name="shadow_type">in</property>
+            <child>
+              <object class="GtkAlignment" id="finished_results_alignment">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="hexpand">False</property>
+                <property name="vexpand">False</property>
+                <property name="top_padding">10</property>
+                <property name="bottom_padding">10</property>
+                <property name="left_padding">10</property>
+                <property name="right_padding">10</property>
+                <child>
+                  <object class="GtkGrid" id="finished_grid">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="hexpand">False</property>
+                    <property name="vexpand">False</property>
+                    <property name="row_homogeneous">True</property>
+                    <property name="column_homogeneous">True</property>
+                    <child>
+                      <object class="GtkLabel" id="finished_found_label">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Found:          </property>
+                        <attributes>
+                          <attribute name="font-desc" value="Arial Black, 10"/>
+                          <attribute name="style" value="normal"/>
+                          <attribute name="weight" value="thin"/>
+                          <attribute name="foreground" value="#dddddddddddd"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="finished_uploaded_label">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">2.2351741291171123e-10</property>
+                        <property name="label" translatable="yes">Uploaded:          </property>
+                        <attributes>
+                          <attribute name="font-desc" value="Arial Black, 10"/>
+                          <attribute name="style" value="normal"/>
+                          <attribute name="weight" value="thin"/>
+                          <attribute name="foreground" value="#dddddddddddd"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="finished_skipped_label">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">Skipped:          </property>
+                        <attributes>
+                          <attribute name="font-desc" value="Arial Black, 10"/>
+                          <attribute name="style" value="normal"/>
+                          <attribute name="weight" value="thin"/>
+                          <attribute name="foreground" value="#dddddddddddd"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="finished_found_label_val">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="hexpand">False</property>
+                        <property name="vexpand">False</property>
+                        <property name="xalign">2.2351741291171123e-10</property>
+                        <property name="label" translatable="yes">files found</property>
+                        <property name="ellipsize">end</property>
+                        <attributes>
+                          <attribute name="font-desc" value="Arial Black, 10"/>
+                          <attribute name="style" value="normal"/>
+                          <attribute name="weight" value="thin"/>
+                          <attribute name="foreground" value="#dddddddddddd"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="finished_uploaded_label_val">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="hexpand">False</property>
+                        <property name="vexpand">False</property>
+                        <property name="xalign">0</property>
+                        <property name="label" translatable="yes">uploaded files</property>
+                        <attributes>
+                          <attribute name="font-desc" value="Arial Black, 10"/>
+                          <attribute name="style" value="normal"/>
+                          <attribute name="weight" value="thin"/>
+                          <attribute name="foreground" value="#dddddddddddd"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="finished_skipped_label_val">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">2.2351741291171123e-10</property>
+                        <property name="label" translatable="yes">skipped files</property>
+                        <attributes>
+                          <attribute name="font-desc" value="Arial Black, 10"/>
+                          <attribute name="style" value="normal"/>
+                          <attribute name="weight" value="thin"/>
+                          <attribute name="foreground" value="#dddddddddddd"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">2</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child type="label">
+              <object class="GtkLabel" id="finished_label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Result</property>
+                <attributes>
+                  <attribute name="font-desc" value="Arial Black, 10"/>
+                  <attribute name="style" value="normal"/>
+                  <attribute name="weight" value="thin"/>
+                  <attribute name="foreground" value="#969696969696"/>
+                </attributes>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkGrid" id="finished_butons_grid">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_left">45</property>
+            <property name="margin_top">15</property>
+            <property name="margin_bottom">15</property>
+            <property name="hexpand">False</property>
+            <property name="vexpand">False</property>
+            <property name="column_homogeneous">True</property>
+            <child>
+              <object class="GtkButton" id="finished_done">
+                <property name="label" translatable="yes">     Done     </property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="halign">start</property>
+                <property name="margin_right">10</property>
+                <signal name="clicked" handler="on_done_button_click" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="finished_empty_label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="login_win">
+    <property name="can_focus">True</property>
+    <property name="receives_default">True</property>
+    <property name="margin_left">5</property>
+    <property name="margin_right">5</property>
+    <property name="margin_bottom">5</property>
+    <property name="title" translatable="yes">iBroadcast MediaSync Lite - Login</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window_position">center</property>
+    <property name="default_width">800</property>
+    <property name="default_height">600</property>
+    <property name="icon">icon.png</property>
+    <property name="gravity">center</property>
+    <signal name="key-press-event" handler="catch_escape_key_press_event" swapped="no"/>
+    <child>
+      <object class="GtkBox" id="box_all">
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="has_focus">True</property>
+        <property name="margin_left">1</property>
+        <property name="margin_right">1</property>
+        <property name="margin_bottom">1</property>
+        <property name="border_width">1</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">6</property>
+        <child>
+          <object class="GtkBox" id="box_head">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkImage" id="head_img_login_form">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="hexpand">False</property>
+                <property name="vexpand">False</property>
+                <property name="pixbuf">__head_.png</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="head_label_login_form">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="margin_top">10</property>
+                <property name="margin_bottom">15</property>
+                <property name="hexpand">False</property>
+                <property name="vexpand">False</property>
+                <property name="xalign">0</property>
+                <property name="xpad">45</property>
+                <property name="label" translatable="yes">Run this program in the parent folder or your music. It will search all folders and sub-folders for music and then upload them into your iBroadcast account.</property>
+                <property name="wrap">True</property>
+                <property name="max_width_chars">55</property>
+                <attributes>
+                  <attribute name="font-desc" value="Arial 10"/>
+                  <attribute name="style" value="normal"/>
+                  <attribute name="weight" value="bold"/>
+                  <attribute name="foreground" value="#dddddddddddd"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkGrid" id="grid_form">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="valign">end</property>
+            <property name="margin_top">5</property>
+            <property name="margin_bottom">5</property>
+            <property name="hexpand">False</property>
+            <property name="vexpand">False</property>
+            <property name="row_spacing">5</property>
+            <property name="column_spacing">10</property>
+            <property name="row_homogeneous">True</property>
+            <child>
+              <object class="GtkLabel" id="login_label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="xalign">2.2351741291171123e-10</property>
+                <property name="xpad">45</property>
+                <property name="label" translatable="yes">Email Address          </property>
+                <attributes>
+                  <attribute name="font-desc" value="Arial Black, 10"/>
+                  <attribute name="style" value="normal"/>
+                  <attribute name="foreground" value="#969696969696"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="pass_label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="xalign">0</property>
+                <property name="xpad">45</property>
+                <property name="label" translatable="yes">Password          </property>
+                <attributes>
+                  <attribute name="font-desc" value="Arial Black, 10"/>
+                  <attribute name="style" value="normal"/>
+                  <attribute name="foreground" value="#969696969696"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="login_entry">
+                <property name="name">login_entry</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="has_focus">True</property>
+                <property name="is_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">False</property>
+                <property name="max_length">64</property>
+                <property name="xalign">0.0099999997764825821</property>
+                <property name="placeholder_text" translatable="yes">Email Address</property>
+                <property name="input_purpose">email</property>
+                <signal name="changed" handler="on_login_entry_insert_text" swapped="no"/>
+                <signal name="key-press-event" handler="catch_tab_event" object="pass_entry" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="pass_entry">
+                <property name="name">pass_entry</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">False</property>
+                <property name="visibility">False</property>
+                <property name="invisible_char">●</property>
+                <property name="xalign">0.0099999997764825821</property>
+                <property name="placeholder_text" translatable="yes">Your iBroadcast password</property>
+                <property name="input_purpose">password</property>
+                <signal name="changed" handler="on_pass_entry_insert_text" swapped="no"/>
+                <signal name="key-press-event" handler="catch_tab_event" object="login_button" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="login_button">
+                <property name="label" translatable="yes">          Login          </property>
+                <property name="name">login_button</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="halign">start</property>
+                <property name="margin_top">2</property>
+                <property name="relief">half</property>
+                <signal name="key-press-event" handler="catch_tab_event" object="login_entry" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="padding">2</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="login_status_label">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_top">15</property>
+            <property name="margin_bottom">15</property>
+            <property name="xalign">0</property>
+            <property name="xpad">45</property>
+            <property name="ellipsize">end</property>
+            <property name="single_line_mode">True</property>
+            <property name="max_width_chars">60</property>
+            <attributes>
+              <attribute name="font-desc" value="Arial 10"/>
+              <attribute name="style" value="normal"/>
+              <attribute name="weight" value="thin"/>
+              <attribute name="foreground" value="#dddddddddddd"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="splash_win">
+    <property name="name">splash_win</property>
+    <property name="can_focus">True</property>
+    <property name="has_focus">True</property>
+    <property name="is_focus">True</property>
+    <property name="receives_default">True</property>
+    <property name="title" translatable="yes">iBroadcast MediaSync Lite - Welcome!</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window_position">center</property>
+    <property name="default_width">801</property>
+    <property name="default_height">600</property>
+    <property name="icon">icon.png</property>
+    <property name="decorated">False</property>
+    <property name="deletable">False</property>
+    <property name="gravity">center</property>
+    <signal name="destroy" handler="on_splash_win_destroy" swapped="no"/>
+    <signal name="key-press-event" handler="on_splash_win_key_press_event" object="splash_label" swapped="no"/>
+    <child>
+      <object class="GtkOverlay" id="overlay1">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkImage" id="head_img_splash">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="pixbuf">splash.jpg</property>
+          </object>
+        </child>
+        <child type="overlay">
+          <object class="GtkLabel" id="splash_label">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="yalign">0.75</property>
+            <property name="label" translatable="yes">Press any key to continue or ESC to quit...</property>
+            <property name="single_line_mode">True</property>
+            <property name="lines">1</property>
+            <attributes>
+              <attribute name="font-desc" value="Arial Black, 12"/>
+              <attribute name="style" value="normal"/>
+              <attribute name="underline" value="True"/>
+              <attribute name="foreground" value="#969696969696"/>
+              <attribute name="gravity" value="south"/>
+            </attributes>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="uploading_win">
+    <property name="name">upload_win</property>
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">iBroadcast MediaSync Lite - Uploading</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window_position">center</property>
+    <property name="icon">icon.png</property>
+    <property name="gravity">center</property>
+    <signal name="destroy" handler="gtk_main_quit" swapped="no"/>
+    <signal name="key-press-event" handler="catch_escape_key_press_event" swapped="no"/>
+    <child>
+      <object class="GtkBox" id="uploading_box_all">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="margin_bottom">5</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkImage" id="uploading_head_img_win">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="pixbuf">__head_.png</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="uploading_count_label">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_top">10</property>
+            <property name="margin_bottom">15</property>
+            <property name="hexpand">False</property>
+            <property name="vexpand">False</property>
+            <property name="xalign">0</property>
+            <property name="xpad">45</property>
+            <property name="label" translatable="yes">uploading count</property>
+            <attributes>
+              <attribute name="font-desc" value="Arial 10"/>
+              <attribute name="style" value="normal"/>
+              <attribute name="weight" value="bold"/>
+              <attribute name="foreground" value="#dddddddddddd"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkFrame" id="uploading_frame_indicators">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_left">45</property>
+            <property name="margin_right">45</property>
+            <property name="margin_top">1</property>
+            <property name="margin_bottom">1</property>
+            <property name="hexpand">False</property>
+            <property name="vexpand">True</property>
+            <property name="label_xalign">0</property>
+            <property name="shadow_type">in</property>
+            <child>
+              <object class="GtkAlignment" id="uploading_frame_alignment">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <property name="xscale">0.98000001907348633</property>
+                <property name="yscale">0.98000001907348633</property>
+                <property name="top_padding">3</property>
+                <property name="bottom_padding">10</property>
+                <property name="left_padding">5</property>
+                <property name="right_padding">5</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </object>
+            </child>
+            <child type="label">
+              <object class="GtkLabel" id="uploading_frame_label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="xalign">0.08999999612569809</property>
+                <property name="label" translatable="yes">Uploading progress</property>
+                <attributes>
+                  <attribute name="font-desc" value="Arial Black, 10"/>
+                  <attribute name="style" value="normal"/>
+                  <attribute name="weight" value="thin"/>
+                  <attribute name="foreground" value="#969696969696"/>
+                </attributes>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkGrid" id="uploading_bottom_grid">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="valign">end</property>
+            <property name="margin_left">45</property>
+            <property name="margin_right">10</property>
+            <property name="margin_top">7</property>
+            <property name="margin_bottom">5</property>
+            <property name="hexpand">False</property>
+            <property name="vexpand">False</property>
+            <property name="row_homogeneous">True</property>
+            <child>
+              <object class="GtkButton" id="uploading_stop_button">
+                <property name="label" translatable="yes">   Pause uploading   </property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="on_uploading_pause_click" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="uploading_status_label">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_top">15</property>
+            <property name="margin_bottom">15</property>
+            <property name="xalign">0</property>
+            <property name="xpad">45</property>
+            <property name="ellipsize">end</property>
+            <property name="single_line_mode">True</property>
+            <property name="max_width_chars">60</property>
+            <attributes>
+              <attribute name="font-desc" value="Arial 10"/>
+              <attribute name="style" value="normal"/>
+              <attribute name="weight" value="thin"/>
+              <attribute name="foreground" value="#dddddddddddd"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">4</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

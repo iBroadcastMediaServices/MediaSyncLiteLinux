@@ -1,0 +1,5 @@
+mediasynclite (0.4.2-1) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Ryan Layne <ryan@ibroadcast.com>  Fri, 19 Mar 2021 14:55:00 -0700
