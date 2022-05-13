@@ -1,33 +1,48 @@
-iBroadcast Media Sync Lite v0.4.2
+## iBroadcast Media Sync Lite v0.4.2
 
+A Linux-native graphical uploader for iBroadcast
+
+## Build
+### Requirements overview
 - gcc
 - make
-- gtk+3.0 development files (usually libgtk3-dev) >= 3.10
-    - on Ubuntu/Debian, use libgtk-3-dev
-    - on Fedora, use gtk3-devel
+- gtk+3.0 development files >= 3.10
 - libcurl
-    - on Ubuntu, use libcurl4-openssl-dev
-    - on Fedora, use libcurl-devel
 - openssl
 - libssl-dev
-- libjansson (available in ./jansson-2.7)
-    - on Ubuntu/Debian, use libjansson-dev
+- libjansson (also available in ./jansson-2.7)
 
+### Debian
+The easist way to install for Debian is using the DEB package available in releases.
+
+You can build the package manually as well:
+```bash
+sudo apt install build-essential libgtk-3-devlibcurl4-openssl-dev libjansson-dev
+```
+### Fedora
+```bash
+sudo dnf groupinstall "C Development Tools and Libraries"
+sudo dnf install jansson-devel libcurl-devel gtk3-devel
+```
+
+## Compile
 Just execute:
+```bash
+make
+```
 
-- make
+## Run
+Now you can run MediaSync Lite from the directory where it was built:
+```bash
+./mediasynclite
+```
 
-You can then run MediaSync Lite from the directory which it was built. 
+## Install
+You can optionall install MediaSync Lite so it's available system-wide:
+```bash
+sudo make install
+```
+The application will be installed in /usr/local/bin directory.
 
-Optionally, if you would like to install so MediaSync Lite is available system wide (as root):
-
-- make install
-
-or to install as regular user:
-
-- sudo make install
-
-Application will be installed in /usr/local/bin directory.
-
-** Known issue:
+## Known issues
 After uploading files, the app must be restarted to prevent those files from being uploaded again as duplicates.
