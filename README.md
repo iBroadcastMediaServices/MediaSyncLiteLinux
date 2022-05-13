@@ -38,7 +38,7 @@ Now you can run MediaSync Lite from the directory where it was built:
 ```
 
 ## Install
-You can optionall install MediaSync Lite so it's available system-wide:
+You can optionally install MediaSync Lite so it's available system-wide:
 ```bash
 sudo make install
 ```
