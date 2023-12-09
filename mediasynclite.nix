@@ -1,6 +1,5 @@
 { pkgs ? import <nixpkgs> {} }: 
 
-
 pkgs.stdenv.mkDerivation rec {
   pname = "mediasynclite";
   version = "0.4.2";
@@ -12,17 +11,23 @@ pkgs.stdenv.mkDerivation rec {
 
   buildInputs = with pkgs; [
    gtk3
+   glib
+   gsettings-desktop-schemas
    pkg-config
    curl
    openssl.dev
    jansson
+   wrapGAppsHook
   ];
 
   makeFlags = [ "PREFIX=$(out)" ];
 
-  pathsToLink = [ "share/ui/" "/bin" ];
-
-  postPatch = ''
+  prePatch = ''
     substituteAllInPlace ./src/ibmsl.c
     '';
+
+  meta = {
+    description = "A Linux-native graphical uploader for iBroadcast";
+    homepage = "https://github.com/iBroadcastMediaServices/MediaSyncLiteLinux";
+  };
 }
