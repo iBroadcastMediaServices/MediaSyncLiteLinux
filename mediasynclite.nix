@@ -22,4 +22,8 @@ pkgs.stdenv.mkDerivation rec {
   makeFlags = [ "PREFIX=$(out)" ];
 
   pathsToLink = [ "share/ui/" "/bin" ];
+
+  postInstall = ''
+    substituteAllInPlace ./src/ibmsl.c
+    ''
 }
