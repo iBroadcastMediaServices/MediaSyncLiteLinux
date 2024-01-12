@@ -17,7 +17,7 @@ The easist way to install for Debian is using the DEB package available in relea
 
 You can build the package manually as well:
 ```bash
-sudo apt install build-essential libgtk-3-devlibcurl4-openssl-dev libjansson-dev
+sudo apt install build-essential libgtk-3-dev libcurl4-openssl-dev libjansson-dev
 ```
 ### Fedora
 ```bash
