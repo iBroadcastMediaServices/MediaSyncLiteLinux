@@ -45,7 +45,7 @@ sudo make install
 The application will be installed in /usr/local/bin directory.
 
 ## Nix
-Nix users on the unstable branch can install by adding `mediasynclite` to their system packages or in an ephemeral shell by
+Nix users on the unstable branch can install by adding `pkgs.mediasynclite` to their system packages or in an ephemeral shell by
 ```nix
 nix-shell -p mediasynclite
 ```
