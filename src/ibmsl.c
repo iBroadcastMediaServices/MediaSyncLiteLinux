@@ -668,6 +668,7 @@ int main (int argc, char **argv) {
         "share/ui/",
         "/usr/local/share/mediasynclite/",
         "/usr/share/mediasynclite/",
+        "@out@/share/mediasynclite/",
         NULL
     };
 
