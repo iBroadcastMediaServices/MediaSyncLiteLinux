@@ -44,5 +44,13 @@ sudo make install
 ```
 The application will be installed in /usr/local/bin directory.
 
+## Nix
+Nix users on the unstable branch can install by adding `pkgs.mediasynclite` to their system packages or in an ephemeral shell by
+```nix
+nix-shell -p mediasynclite
+```
+
+Alternatively, you can clone this directory and run `nix-build` to build the derivation.
+
 ## Known issues
 After uploading files, the app must be restarted to prevent those files from being uploaded again as duplicates.
