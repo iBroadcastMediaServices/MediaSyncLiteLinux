@@ -1,33 +1,54 @@
-{ pkgs ? import <nixpkgs> {} }: 
+{ lib
+, stdenv
+, fetchFromGitHub
+, gtk3
+, glib
+, gsettings-desktop-schemas
+, pkg-config
+, curl
+, openssl
+, jansson
+, wrapGAppsHook3
+}:
 
-pkgs.stdenv.mkDerivation rec {
+stdenv.mkDerivation rec {
   pname = "mediasynclite";
   version = "0.4.2";
 
-  src = pkgs.fetchgit {
-    url = "https://github.com/tobz619/MediaSyncLiteLinuxNix.git";
-    sha256 = "0ilm9ksvn88ky7nc3b05f1cjf4hjjc4w11wjnknhi100c8pzxqsc";
+  src = fetchFromGitHub {
+    owner = "iBroadcastMediaServices";
+    repo = "MediaSyncLiteLinux";
+    rev = version;
+    hash = "sha256-ToSkR6tPJMBCcj1NUBAywKjCAPlpmh+ngIopFrT2PIA=";
     };
 
-  buildInputs = with pkgs; [
-   gtk3
+  buildInputs = [
+   curl
    glib
+   gtk3
+   openssl
+   jansson
+  ];
+
+  strictDeps = true;
+
+  nativeBuildInputs = [
    gsettings-desktop-schemas
    pkg-config
-   curl
-   openssl.dev
-   jansson
-   wrapGAppsHook
+   wrapGAppsHook3
   ];
 
   makeFlags = [ "PREFIX=$(out)" ];
 
-  prePatch = ''
-    substituteAllInPlace ./src/ibmsl.c
-    '';
+  postPatch = ''
+    substitute ./src/ibmsl.c ./src/ibmsl.c --subst-var out
+  '';
 
-  meta = {
+  meta = with lib; {
     description = "A Linux-native graphical uploader for iBroadcast";
+    downloadPage = "https://project.ibroadcast.com/";
     homepage = "https://github.com/iBroadcastMediaServices/MediaSyncLiteLinux";
+    license = licenses.gpl3Only;
+    maintainers = with maintainers; [ tobz619 ];
   };
 }
