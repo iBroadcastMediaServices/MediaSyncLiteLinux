@@ -20,11 +20,11 @@
 
 #define __APP_UI_            "ui.glade"
 
-#define __JSON_API_URL_      "https://json.ibroadcast.com/s/JSON/"
-#define __UPLOAD_URL_        "https://sync.ibroadcast.com"
+#define __JSON_API_URL_      "https://api.ibroadcast.com/s/JSON/"
+#define __UPLOAD_URL_        "https://upload.ibroadcast.com"
 #define __UPLOAD_TYPE_       "Content-Type: multipart/form-data"
-#define __UA_                "User-Agent: MediaSync Lite for Linux v0.4.2"
-#define __METHOD_            "MediaSync Lite for Linux v0.4.2"
+#define __UA_                "User-Agent: MediaSync Lite for Linux v0.4.3"
+#define __METHOD_            "MediaSync Lite for Linux v0.4.3"
 
 #define __MUSIC_DIR          "/Music"
 
