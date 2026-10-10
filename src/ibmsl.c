@@ -655,6 +655,9 @@ gboolean on_done_button_click(GtkWidget *widget, gpointer ptr) {
 
 gboolean destroy_widget(GtkWidget *widget, gpointer ptr) {
 
+    /* One-shot: on_uploading_win_show connects a new handler per upload run,
+     * so drop this one or the next hide destroys an already-freed grid */
+    g_signal_handlers_disconnect_by_func(widget, (gpointer)destroy_widget, ptr);
     gtk_widget_destroy(GTK_WIDGET(ptr));
     return FALSE;
 }
@@ -710,7 +713,6 @@ int main (int argc, char **argv) {
     gtk_widget_show(window);
     gtk_main();
 
-    free(resource_path);
     curl_global_cleanup();
 
     return 0;
